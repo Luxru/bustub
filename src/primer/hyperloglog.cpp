@@ -30,7 +30,7 @@ HyperLogLog<KeyType>::HyperLogLog(int16_t n_bits) : cardinality_(0),inital_bits_
   for (uint64_t i = 0; i < size; i++) {
     dense_bucket_[i] = 0;
   }
-  LOG_INFO("HyperLogLog initialized with %d bits, size: %ld", n_bits, (long)size);
+  // LOG_INFO("HyperLogLog initialized with %d bits, size: %ld", n_bits, (long)size);
 }
 
 /**
@@ -74,16 +74,16 @@ template <typename KeyType>
 auto HyperLogLog<KeyType>::AddElem(KeyType val) -> void {
   /** @TODO(student) Implement this function! */
   hash_t hash = CalculateHash(val);
-  LOG_DEBUG("Hash value: %lu", (unsigned long)hash);
+  // LOG_DEBUG("Hash value: %lu", (unsigned long)hash);
   // compute the index
   uint64_t index = (hash>>(BITSET_CAPACITY-inital_bits_)) & ((1 << inital_bits_) - 1);
-  LOG_DEBUG("Index: %lu", (unsigned long)index);
+  // LOG_DEBUG("Index: %lu", (unsigned long)index);
   // compute the leading ones
   std::bitset<BITSET_CAPACITY> bset = ComputeBinary(hash);
-  LOG_DEBUG("Binary: %s", bset.to_string().c_str());
+  // LOG_DEBUG("Binary: %s", bset.to_string().c_str());
 
   uint64_t leading_ones = PositionOfLeftmostOne(bset);
-  LOG_DEBUG("Leading ones: %lu", (unsigned long)leading_ones);
+  // LOG_DEBUG("Leading ones: %lu", (unsigned long)leading_ones);
   // update the bucket
   if (leading_ones > dense_bucket_[index]) {
     dense_bucket_[index] = leading_ones;
@@ -102,9 +102,9 @@ auto HyperLogLog<KeyType>::ComputeCardinality() -> void {
   for (uint64_t i = 0; i < m; i++) {
     sum += std::pow(2, -static_cast<int64_t>(dense_bucket_[i]));
   }
-  LOG_DEBUG("Sum: %lf, m: %lu", sum, (unsigned long)m);
+  // LOG_DEBUG("Sum: %lf, m: %lu", sum, (unsigned long)m);
   double cardinality = CONSTANT * m * m / sum;
-  LOG_DEBUG("Cardinality: %lf", cardinality);
+  // LOG_DEBUG("Cardinality: %lf", cardinality);
   cardinality_ = std::floor(cardinality);
 }
 
